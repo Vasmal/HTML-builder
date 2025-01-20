@@ -13,7 +13,7 @@ fs.readdir(secretFolderPath, { withFileTypes: true }, (err, files) => {
         const ext = path.extname(filePath);
         fs.stat(filePath, (err, stats) => {
           if (err) {
-            console.error(err);
+            console.log(err);
             return;
           }
           const size = stats.size;
