@@ -29,18 +29,29 @@ async function makeProject(dir) {
 
   await fs.promises.writeFile(bundle, '');
 
-  const output = fs.createWriteStream(bundle);
-  const styles = await fs.promises.readdir(styleFiles, { withFileTypes: true });
-  styles.forEach((style) => {
-    if (style.isFile()) {
-      const filePath = path.join(styleFiles, style.name);
+  // const styles = await fs.promises.readdir(styleFiles, { withFileTypes: true });
+  // for() => {
+  //   if (style.isFile()) {
+  //     const filePath = path.join(styleFiles, style.name);
+  //     const ext = path.extname(filePath);
+  //     if (ext === '.css') {
+  //       const input = await fs.promises.readFile(filePath);
+  //       input.pipe(output);
+  //     }
+  //   }
+  // });
+
+  const files = await fs.promises.readdir(styleFiles, { withFileTypes: true });
+  for (let file of files) {
+    if (file.isFile()) {
+      const filePath = path.join(styleFiles, file.name);
       const ext = path.extname(filePath);
       if (ext === '.css') {
-        const input = fs.createReadStream(filePath);
-        input.pipe(output);
+        const input = await fs.promises.readFile(filePath, 'utf-8');
+        await fs.promises.appendFile(bundle, input);
       }
     }
-  });
+  }
 
   async function copyFolder(srcFolder, destFolder) {
     await fs.promises.mkdir(destFolder, { recursive: true });
